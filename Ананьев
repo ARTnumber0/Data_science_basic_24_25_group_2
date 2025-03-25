@@ -1,0 +1,60 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+df = pd.read_csv("train_LZdllcl.csv.zip")
+df.head()
+print(df.shape)
+print(df.info())
+print(df.isna().sum())
+print(df['is_promoted'].value_counts())
+print(df["employee_id"].nunique())
+df = df.drop(["employee_id"], axis = 1)
+df.head()
+print(df["department"].nunique())
+df1 = df["department"].str.get_dummies()
+df = df.drop(["department"], axis = 1)
+df =  df = pd.concat([df, df1], axis=1)
+df.head()
+print(df["region"].nunique())
+df1 = df["region"].str.get_dummies()
+df = df.drop(["region"], axis = 1)
+df =  df = pd.concat([df, df1], axis=1)
+df.head()
+print(df["education"].nunique())
+print(df["education"].unique())
+d = {"Master's & above": 1, "Bachelor's": 2, "Below Secondary": 3}
+df["education"] = df["education"].map(d)
+value = df["education"].mean()
+df["education"] = df["education"].fillna(value)
+df.head()
+print(df["gender"].nunique())
+print(df["gender"].unique())
+d = {"f": 1, "m": 2}
+df["gender"] = df["gender"].map(d)
+df.head()
+print(df["recruitment_channel"].nunique())
+print(df["recruitment_channel"].unique())
+d = {"sourcing": 1, "other": 2, "referred": 3}
+df["recruitment_channel"] = df["recruitment_channel"].map(d)
+df.head()
+value = df["previous_year_rating"].mean()
+df["previous_year_rating"] = df["previous_year_rating"].fillna(value)
+df.head()
+print(df.shape)
+print(df.info())
+print(df.isna().sum())
+X = df.drop(['is_promoted'], axis=1)
+y = df['is_promoted']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+model = LogisticRegression()
+model.fit(X_train, y_train)
+answers_pred = model.predict(X_test)
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+print(accuracy_score(y_test, answers_pred))
+recall_score(y_test, answers_pred)
+precision_score(y_test, answers_pred)
+f1_score(y_test, answers_pred)
